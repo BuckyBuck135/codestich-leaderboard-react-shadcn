@@ -1,0 +1,47 @@
+---
+import Layout from "@/layouts/main.astro"
+import { createClient } from "../lib/supabase"
+import { ChartBarDefault } from "@/components/chart-bar-default"
+
+const supabase = createClient({
+	request: Astro.request,
+	cookies: Astro.cookies,
+})
+
+const { data } = await supabase.auth.getUser()
+if (!data?.user) return Astro.redirect("/auth/signin")
+
+const user = data.user
+---
+
+<Layout>
+	<div class="flex min-h-svh flex-col gap-8 p-6">
+		<div class="flex items-center justify-between">
+			<div>
+				<h1 class="text-2xl font-bold">Welcome!</h1>
+				<p class="text-sm text-muted-foreground">{user.email}</p>
+			</div>
+			<button
+				id="signout-btn"
+				class="rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted disabled:opacity-50"
+			>
+				Sign Out
+			</button>
+		</div>
+		<div class="w-full max-w-md">
+			<ChartBarDefault client:load />
+		</div>
+	</div>
+</Layout>
+
+<script>
+	import { actions } from "astro:actions"
+
+	const btn = document.querySelector<HTMLButtonElement>("#signout-btn")!
+	btn.addEventListener("click", async () => {
+		btn.disabled = true
+		btn.textContent = "Signing out…"
+		await actions.signOut()
+		window.location.href = "/auth/signin"
+	})
+</script>
