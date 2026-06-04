@@ -50,8 +50,34 @@ if (user) {
 		}
 	}
 }
+
+async function fetchMetrics() {
+	try {
+		const { data, error } = await supabase.from("mrr").select(`
+			value,
+			user_profiles!inner(name, agency, url)
+		`)
+		if (error) throw error
+		return ((data ?? []) as any[]).map((row) => ({
+			name: row.user_profiles.name,
+			agency: row.user_profiles.agency,
+			url: row.user_profiles.url,
+			value: row.value,
+		}))
+	} catch (error) {
+		console.error("Failed to fetch metrics:", error)
+		return []
+	}
+}
+
+const metrics = await fetchMetrics()
 ---
 
 <Layout>
-	<DashboardPage client:load user={userProp} agencyOwners={agencyOwners} />
+	<DashboardPage
+		client:load
+		user={userProp}
+		agencyOwners={agencyOwners}
+		metrics={metrics}
+	/>
 </Layout>

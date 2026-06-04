@@ -4,11 +4,10 @@ import * as React from "react"
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartBar } from "@/components/chart-bar-default"
-import { DataTable } from "@/components/data-table"
+import { MrrTable } from "@/components/mrr-table"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-
-import data from "@/app/dashboard/data.json"
+import { createBrowserSupabaseClient } from "@/lib/supabase"
 
 export type UserProp = {
   id: string
@@ -23,13 +22,51 @@ export type UserProp = {
 
 export type User = { id: string; name: string; agency: string }
 
+export type MetricRow = { name: string; value: number; agency: string; url: string }
+
 export function DashboardPage({
   user = null,
   agencyOwners = [],
+  metrics: initialMetrics = [],
 }: {
   user?: UserProp
   agencyOwners?: User[]
+  metrics?: MetricRow[]
 }) {
+  const [metrics, setMetrics] = React.useState<MetricRow[]>(initialMetrics)
+
+  React.useEffect(() => {
+    const supabase = createBrowserSupabaseClient()
+
+    async function fetchMetrics() {
+      const { data } = await supabase.from("mrr").select(`
+        value,
+        user_profiles!inner(name, agency, url)
+      `)
+      if (data) {
+        setMetrics(
+          (data as any[]).map((row) => ({
+            name: row.user_profiles.name,
+            agency: row.user_profiles.agency,
+            url: row.user_profiles.url,
+            value: row.value,
+          }))
+        )
+      }
+    }
+
+    const channel = supabase
+      .channel("mrr-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "mrr" }, () => {
+        fetchMetrics()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [])
+
   return (
     <SidebarProvider
       style={
@@ -47,9 +84,11 @@ export function DashboardPage({
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               {/* <SectionCards /> */}
               <div className="px-4 lg:px-6">
-                <ChartBar />
+                <ChartBar metrics={metrics} />
               </div>
-              <DataTable data={data} />
+			  <div className="px-4 lg:px-6">
+                <MrrTable metrics={metrics} />
+			  </div>
             </div>
           </div>
         </div>

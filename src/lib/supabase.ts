@@ -1,5 +1,12 @@
-import { createServerClient, parseCookieHeader } from "@supabase/ssr"
+import { createServerClient, createBrowserClient, parseCookieHeader } from "@supabase/ssr"
 import type { AstroCookies } from "astro"
+
+export function createBrowserSupabaseClient() {
+  return createBrowserClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  )
+}
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
 const supabasePublishableKey = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY
