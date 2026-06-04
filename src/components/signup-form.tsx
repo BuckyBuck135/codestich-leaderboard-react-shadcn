@@ -11,6 +11,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 
 export function SignupForm({
   className,
@@ -73,6 +74,19 @@ export function SignupForm({
           )}
         </Field>
         <Field>
+          <FieldLabel htmlFor="url">Your agency URL</FieldLabel>
+          <Input
+            id="url"
+            name="url"
+            type="text"
+            placeholder="https://www.doewebstudio.com"
+            required
+          />
+          {fieldErrors.url && (
+            <p className="text-sm text-destructive">{fieldErrors.url}</p>
+          )}
+        </Field>
+        <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
             id="email"
@@ -81,17 +95,13 @@ export function SignupForm({
             placeholder="m@example.com"
             required
           />
-          <FieldDescription>
-            We&apos;ll use this to contact you. We will not share your email
-            with anyone else.
-          </FieldDescription>
           {fieldErrors.email && (
             <p className="text-sm text-destructive">{fieldErrors.email}</p>
           )}
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input id="password" name="password" type="password" required />
+          <PasswordInput id="password" name="password" required />
           <FieldDescription>
             Must be at least 6 characters long.
           </FieldDescription>
@@ -101,10 +111,9 @@ export function SignupForm({
         </Field>
         <Field>
           <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-          <Input
+          <PasswordInput
             id="confirm-password"
             name="confirm-password"
-            type="password"
             required
           />
           <FieldDescription>Please confirm your password.</FieldDescription>
@@ -119,7 +128,7 @@ export function SignupForm({
             {pending ? "Creating account…" : "Create Account"}
           </Button>
         </Field>
-        <FieldSeparator>Or continue with</FieldSeparator>
+        {/* <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
           <Button variant="outline" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -136,7 +145,7 @@ export function SignupForm({
               Sign in
             </a>
           </FieldDescription>
-        </Field>
+        </Field> */}
       </FieldGroup>
     </form>
   )

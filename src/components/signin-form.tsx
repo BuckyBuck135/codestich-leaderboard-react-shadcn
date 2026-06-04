@@ -11,6 +11,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 
 export function SigninForm({
   className,
@@ -64,13 +65,13 @@ export function SigninForm({
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <a
-              href="#"
+              href="/auth/forgot-password"
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
               Forgot your password?
             </a>
           </div>
-          <Input id="password" name="password" type="password" required />
+          <PasswordInput id="password" name="password" required />
           {fieldErrors.password && (
             <p className="text-sm text-destructive">{fieldErrors.password}</p>
           )}
@@ -80,7 +81,15 @@ export function SigninForm({
             {pending ? "Logging in…" : "Login"}
           </Button>
         </Field>
-        <FieldSeparator>Or continue with</FieldSeparator>
+        <FieldSeparator>Don&apos;t have an account? </FieldSeparator>
+
+        <FieldDescription className="text-center">
+          {/* Don&apos;t have an account?{" "} */}
+          <a href="/auth/signup" className="underline underline-offset-4">
+            Sign up
+          </a>
+        </FieldDescription>
+        {/* <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
           <Button variant="outline" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -97,7 +106,7 @@ export function SigninForm({
               Sign up
             </a>
           </FieldDescription>
-        </Field>
+        </Field> */}
       </FieldGroup>
     </form>
   )
