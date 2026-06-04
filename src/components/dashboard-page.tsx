@@ -22,7 +22,12 @@ export type UserProp = {
 
 export type User = { id: string; name: string; agency: string }
 
-export type MetricRow = { name: string; value: number; agency: string; url: string }
+export type MetricRow = {
+  name: string
+  value: number
+  agency: string
+  url: string
+}
 
 export function DashboardPage({
   user = null,
@@ -55,11 +60,17 @@ export function DashboardPage({
       }
     }
 
+    fetchMetrics()
+
     const channel = supabase
       .channel("mrr-changes")
-      .on("postgres_changes", { event: "*", schema: "public", table: "mrr" }, () => {
-        fetchMetrics()
-      })
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "mrr" },
+        () => {
+          fetchMetrics()
+        }
+      )
       .subscribe()
 
     return () => {
@@ -86,9 +97,9 @@ export function DashboardPage({
               <div className="px-4 lg:px-6">
                 <ChartBar metrics={metrics} />
               </div>
-			  <div className="px-4 lg:px-6">
+              <div className="px-4 lg:px-6">
                 <MrrTable metrics={metrics} />
-			  </div>
+              </div>
             </div>
           </div>
         </div>

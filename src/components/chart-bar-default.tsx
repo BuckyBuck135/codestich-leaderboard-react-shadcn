@@ -27,14 +27,27 @@ const chartConfig = {
 } satisfies ChartConfig
 
 function CustomXAxisTick({
-  x, y, payload, data,
+  x,
+  y,
+  payload,
+  data,
 }: {
-  x: number | string; y: number | string; payload: { value: string }; data: MetricRow[]
+  x: number | string
+  y: number | string
+  payload: { value: string }
+  data: MetricRow[]
 }) {
   const entry = data.find((d) => d.name === payload.value)
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="middle" fontSize={12} fill="currentColor">
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="middle"
+        fontSize={12}
+        fill="currentColor"
+      >
         {payload.value}
       </text>
       {entry?.agency && (
@@ -51,10 +64,12 @@ export function ChartBar({ metrics = [] }: { metrics?: MetricRow[] }) {
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart</CardTitle>
-        <CardDescription>Total MRR ($ USD / month) per agency owner. Data is self-reported.</CardDescription>
+        <CardDescription>
+          Total MRR ($ USD / month) per agency owner. Data is self-reported.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="w-full max-h-96">
+        <ChartContainer config={chartConfig} className="max-h-96 w-full">
           <BarChart accessibilityLayer data={metrics} margin={{ bottom: 24 }}>
             <CartesianGrid vertical={false} />
             <XAxis
@@ -65,11 +80,12 @@ export function ChartBar({ metrics = [] }: { metrics?: MetricRow[] }) {
               interval={0}
               tick={(props) => <CustomXAxisTick {...props} data={metrics} />}
             />
-			<YAxis 
-			dataKey="value" 
-			tickLine={false}
-            tickMargin={10}
-            axisLine={false}/>
+            <YAxis
+              // dataKey="value"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+            />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
