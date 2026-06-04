@@ -8,11 +8,50 @@ const supabase = createClient({
 	cookies: Astro.cookies,
 })
 
-const { data } = await supabase.auth.getUser()
+const {
+	data: { user },
+} = await supabase.auth.getUser()
+
 // uncomment to NOT allow unauthenticated users to access the dashboard
 // if (!data?.user) return Astro.redirect("/auth/signin")
+
+let userProp = null
+let agencyOwners: { id: string; name: string; agency: string }[] = []
+
+if (user) {
+	const { data: profile } = await supabase
+		.from("user_profiles")
+		.select("name, account_type, agency, url")
+		.eq("id", user.id)
+		.single()
+
+	if (profile) {
+		userProp = {
+			id: user.id,
+			name: profile.name ?? "",
+			email: user.email ?? "",
+			avatar: "",
+			accountType: profile.account_type as "admin" | "agency owner" | null,
+			agency: profile.agency as string | null,
+			account_type: profile.account_type,
+			url: profile.url as string | null,
+		}
+
+		if (profile.account_type === "admin") {
+			const { data } = await supabase
+				.from("user_profiles")
+				.select("id, name, agency")
+				.eq("account_type", "agency owner")
+			agencyOwners = (data ?? []) as {
+				id: string
+				name: string
+				agency: string
+			}[]
+		}
+	}
+}
 ---
 
 <Layout>
-	<DashboardPage client:load />
+	<DashboardPage client:load user={userProp} agencyOwners={agencyOwners} />
 </Layout>

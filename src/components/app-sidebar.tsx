@@ -1,8 +1,6 @@
 import * as React from "react"
+import { actions } from "astro:actions"
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,169 +23,85 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar"
-import {
-  IconDashboard,
-  IconListDetails,
-  IconChartBar,
-  IconFolder,
-  IconUsers,
-  IconCamera,
-  IconFileDescription,
-  IconFileAi,
-  IconSettings,
-  IconHelp,
-  IconSearch,
-  IconDatabase,
-  IconReport,
-  IconFileWord,
-  IconInnerShadowTop,
-} from "@tabler/icons-react"
+import { IconInnerShadowTop } from "@tabler/icons-react"
+import type { UserProp, User } from "@/components/dashboard-page"
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: <IconDashboard />,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: <IconListDetails />,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: <IconChartBar />,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: <IconFolder />,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: <IconUsers />,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: <IconCamera />,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: <IconFileDescription />,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: <IconFileAi />,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: <IconSettings />,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: <IconHelp />,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: <IconSearch />,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: <IconDatabase />,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: <IconReport />,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: <IconFileWord />,
-    },
-  ],
-}
-function SubmitScoreForm() {
-  const [agency, setAgency] = React.useState("")
+function SubmitScoreForm({
+  user,
+  agencyOwners,
+}: {
+  user: UserProp
+  agencyOwners: User[]
+}) {
+  const [targetUserId, setTargetUserId] = React.useState("")
   const [value, setValue] = React.useState("")
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [feedback, setFeedback] = React.useState<{
+    type: "success" | "error"
+    message: string
+  } | null>(null)
 
-  function handleSubmit(e: React.FormEvent) {
+  const isGuest = !user
+  const isAdmin = user?.accountType === "admin"
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    // TODO: wire to action
-    console.log({ agency, value })
+    setIsLoading(true)
+    setFeedback(null)
+
+    const { error } = await actions.submitMrr(
+      isAdmin
+        ? { targetUserId, value: Number(value) }
+        : { value: Number(value) }
+    )
+
+    setIsLoading(false)
+    if (error) {
+      setFeedback({ type: "error", message: error.message })
+    } else {
+      setFeedback({ type: "success", message: "MRR submitted" })
+      setValue("")
+      if (isAdmin) setTargetUserId("")
+    }
   }
+
+  const canSubmit =
+    value !== "" && (user?.accountType === "agency owner" || (isAdmin && targetUserId !== ""))
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="agency">Agency</Label>
-        <Select value={agency} onValueChange={(val) => setAgency(val ?? "")}>
-          <SelectTrigger id="agency" className="w-full rounded-md">
-            <SelectValue placeholder="Select agency" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="agency-a">Agency A</SelectItem>
-            <SelectItem value="agency-b">Agency B</SelectItem>
-            <SelectItem value="agency-c">Agency C</SelectItem>
-          </SelectContent>
-        </Select>
+        {isAdmin ? (
+          <Select value={targetUserId} onValueChange={(val) => setTargetUserId(val ?? "")}>
+            <SelectTrigger id="agency" className="w-full rounded-md">
+              <SelectValue placeholder="Select agency">
+                {agencyOwners.find(o => o.id === targetUserId)?.agency ??
+                  agencyOwners.find(o => o.id === targetUserId)?.name}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {agencyOwners.map((owner) => (
+                <SelectItem key={owner.id} value={owner.id}>
+                  {owner.agency ?? owner.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <Input
+            id="agency"
+            value={isGuest ? "" : (user?.agency ?? "")}
+            readOnly
+            disabled={isGuest}
+            placeholder={isGuest ? "—" : undefined}
+            className="bg-muted"
+          />
+        )}
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="score-value">Value</Label>
+        <Label htmlFor="score-value">Value (USD/mo)</Label>
         <Input
           id="score-value"
           type="number"
@@ -195,16 +109,42 @@ function SubmitScoreForm() {
           placeholder="0"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          disabled={isGuest}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={!agency || !value}>
-        Submit
-      </Button>
+      {isGuest ? (
+        <p className="text-s text-muted-foreground text-center">
+          <a href="/auth/signin" className="underline">
+            Sign in
+          </a>{" "}
+          to submit MRR
+        </p>
+      ) : (
+        <Button type="submit" className="w-full" disabled={!canSubmit || isLoading}>
+          {isLoading ? "Submitting…" : "Submit"}
+        </Button>
+      )}
+      {feedback && (
+        <p
+          className={`text-xs ${
+            feedback.type === "success" ? "text-green-600" : "text-destructive"
+          }`}
+        >
+          {feedback.message}
+        </p>
+      )}
     </form>
   )
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  user = null,
+  agencyOwners = [],
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  user?: UserProp
+  agencyOwners?: User[]
+}) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -221,19 +161,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {/* <NavMain items={data.navMain} /> */}
-        {/* <NavDocuments items={data.documents} /> */}
-        {/* <SidebarSeparator /> */}
         <SidebarGroup>
           <SidebarGroupLabel>Add or Update MRR</SidebarGroupLabel>
           <SidebarGroupContent className="px-2">
-            <SubmitScoreForm />
+            <SubmitScoreForm user={user} agencyOwners={agencyOwners} />
           </SidebarGroupContent>
         </SidebarGroup>
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

@@ -5,13 +5,31 @@ import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartBar } from "@/components/chart-bar-default"
 import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 import data from "@/app/dashboard/data.json"
 
-export function DashboardPage() {
+export type UserProp = {
+  id: string
+  name: string
+  email: string
+  avatar: string
+  accountType: "admin" | "agency owner" | null
+  agency: string | null
+  account_type?: string | null
+  url?: string | null
+} | null
+
+export type User = { id: string; name: string; agency: string }
+
+export function DashboardPage({
+  user = null,
+  agencyOwners = [],
+}: {
+  user?: UserProp
+  agencyOwners?: User[]
+}) {
   return (
     <SidebarProvider
       style={
@@ -21,7 +39,7 @@ export function DashboardPage() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" user={user} agencyOwners={agencyOwners} />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

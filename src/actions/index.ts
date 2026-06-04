@@ -118,4 +118,50 @@ export const server = {
       return { success: true }
     },
   }),
+
+  submitMrr: defineAction({
+    input: z.object({
+      targetUserId: z.uuid().optional(),
+      value: z.number().int().min(0),
+    }),
+    handler: async ({ targetUserId, value }, context) => {
+      const supabase = createClient({
+        request: context.request,
+        cookies: context.cookies,
+      })
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        throw new ActionError({ code: "UNAUTHORIZED", message: "Not authenticated" })
+      }
+
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("account_type")
+        .eq("id", user.id)
+        .single()
+
+      if (!profile) {
+        throw new ActionError({ code: "UNAUTHORIZED", message: "Profile not found" })
+      }
+
+      let userId: string
+      if (profile.account_type === "admin") {
+        if (!targetUserId) {
+          throw new ActionError({ code: "BAD_REQUEST", message: "Admin must specify a target user" })
+        }
+        userId = targetUserId
+      } else if (profile.account_type === "agency owner") {
+        userId = user.id
+      } else {
+        throw new ActionError({ code: "FORBIDDEN", message: "Not authorized to submit MRR" })
+      }
+
+      const { error } = await supabase.from("mrr").insert({ user_id: userId, value })
+      if (error) {
+        throw new ActionError({ code: "BAD_REQUEST", message: error.message })
+      }
+
+      return { success: true }
+    },
+  }),
 }
