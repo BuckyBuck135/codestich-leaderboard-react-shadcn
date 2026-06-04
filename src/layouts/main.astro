@@ -1,5 +1,12 @@
 ---
 import "@/styles/global.css"
+import Navbar from "@/components/navbar.astro"
+
+interface Props {
+  user?: { name: string; email: string } | null
+}
+
+const { user = null } = Astro.props
 ---
 
 <html lang="en">
@@ -8,8 +15,14 @@ import "@/styles/global.css"
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Astro App</title>
+    <script is:inline>
+      const theme = localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      document.documentElement.classList.toggle("dark", theme === "dark")
+    </script>
   </head>
   <body>
+    <Navbar user={user} />
     <slot />
   </body>
 </html>
