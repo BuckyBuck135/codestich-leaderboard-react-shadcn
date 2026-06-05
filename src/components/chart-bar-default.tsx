@@ -1,13 +1,13 @@
 "use client"
 
 // import { IconTrendingUp } from "@tabler/icons-react"
+import { useEffect, useState } from "react"
 import { Bar, BarChart, CartesianGrid, YAxis, XAxis } from "recharts"
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -60,6 +60,12 @@ function CustomXAxisTick({
 }
 
 export function ChartBar({ metrics = [] }: { metrics?: MetricRow[] }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <Card>
       <CardHeader>
@@ -69,39 +75,34 @@ export function ChartBar({ metrics = [] }: { metrics?: MetricRow[] }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-h-96 w-full">
-          <BarChart accessibilityLayer data={metrics} margin={{ bottom: 24 }}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="name"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              interval={0}
-              tick={(props) => <CustomXAxisTick {...props} data={metrics} />}
-            />
-            <YAxis
-              // dataKey="value"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Bar dataKey="value" fill="var(--color-value)" radius={8} />
-          </BarChart>
-        </ChartContainer>
+        {mounted ? (
+          <ChartContainer config={chartConfig} className="max-h-96 w-full">
+            <BarChart accessibilityLayer data={metrics} margin={{ bottom: 24 }}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                interval={0}
+                tick={(props) => <CustomXAxisTick {...props} data={metrics} />}
+              />
+              <YAxis
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Bar dataKey="value" fill="var(--color-value)" radius={8} />
+            </BarChart>
+          </ChartContainer>
+        ) : (
+          <div className="aspect-video max-h-96 w-full" />
+        )}
       </CardContent>
-      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 leading-none font-medium">
-          Agency owners using the Codestitch business model and/or the Codestitch UI library. 
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Sign up to add your 🏆 #freelancing-wins!
-        </div>
-      </CardFooter> */}
     </Card>
   )
 }
