@@ -1,0 +1,45 @@
+---
+interface Props {
+	testimonial: string
+	name: string
+	title: string
+}
+
+const { testimonial, name, title } = Astro.props
+
+function initials(n: string) {
+	return n
+		.split(" ")
+		.slice(0, 2)
+		.map((p) => p[0].toUpperCase())
+		.join("")
+}
+---
+
+<div class="group relative overflow-clip rounded-lg border">
+	<!-- Hover glow -->
+	<div
+		class="pointer-events-none absolute inset-0 block opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+	>
+		<div
+			class="absolute inset-0 bg-gradient-to-br from-foreground/5 to-transparent dark:from-primary/5"
+		>
+		</div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative flex h-full flex-col justify-between p-6 transition-colors">
+		<p class="mb-6 text-sm text-muted-foreground md:text-base">{testimonial}</p>
+		<div class="flex items-center gap-4">
+			<div
+				class="flex aspect-square h-12 shrink-0 items-center justify-center rounded-full border bg-muted text-xs font-semibold"
+			>
+				{initials(name)}
+			</div>
+			<div>
+				<div class="font-medium">{name}</div>
+				<div class="text-sm text-muted-foreground">{title}</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,4 +1,6 @@
 ---
+import Logo from "@assets/logo.svg"
+
 interface Props {
 	user?: { name: string; email: string } | null
 }
@@ -18,10 +20,9 @@ function getInitials(name: string) {
 <header
 	class="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm"
 >
-	<div class="mx-auto flex h-14 items-center px-4 lg:px-6">
-		<a href="/" class="flex items-center gap-2 text-sm font-semibold">
-			<div class="size-6 rounded-md bg-primary"></div>
-			<span>Codestitch</span>
+	<div class="site-container flex h-14 items-center border-x">
+		<a href="/" class="flex items-center">
+			<Logo class="h-6 w-auto dark:invert" />
 		</a>
 
 		<div class="flex-1"></div>

@@ -1,17 +1,16 @@
 ---
 import Layout from "@/layouts/main.astro"
-import { Button } from "@/components/ui/button"
+import Hero from "@/components/hero.astro"
+import FeatureGrid from "@/components/feature-grid.astro"
+import Testimonials from "@/components/testimonials.astro"
+import Cta from "@/components/cta.astro"
+import Footer from "@/components/footer.astro"
 ---
 
 <Layout>
-  <div class="flex min-h-svh p-6">
-    <div class="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-      <div>
-        <h1 class="font-medium">Project ready!</h1>
-        <p>You may now add components and start building.</p>
-        <p>We've already added the button component for you.</p>
-        <Button client:load className="mt-2">Button</Button>
-      </div>
-    </div>
-  </div>
+	<Hero />
+	<FeatureGrid />
+	<Testimonials />
+	<Cta />
+	<Footer />
 </Layout>

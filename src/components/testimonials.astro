@@ -1,0 +1,44 @@
+---
+import TestimonialCard from "@/components/testimonial-card.astro"
+
+const testimonials = [
+	{
+		testimonial:
+			"Just hit 2.2kmrr and have some warm leads. I finally feel like I hit my stride now its just scaling, mainly doing custom websites, gbp, seo packages. again cant thank this group enough...",
+		name: "Boni",
+		title: "Freelance Web Designer",
+	},
+	{
+		testimonial: "1st call attempt -> 1st client onboarded 💪",
+		name: "Madhav",
+		title: "Freelance Web Designer",
+	},
+	{
+		testimonial:
+			"Just want to encourage you all to keep pushing! This has been a wild year for me, and it's all come down to consistency. Keep showing up, keep calling, keep networking. It. Will. Pay. Off.",
+		name: "Joe",
+		title: "Freelance Web Designer",
+	},
+]
+---
+
+<div class="site-container border-x py-24 pt-0">
+	<div class="mx-auto max-w-6xl px-4">
+		<div class="mb-12 text-center">
+			<h2 class="text-2xl font-semibold md:text-3xl">
+				Snippets from 🏆 #freelancing-wins
+			</h2>
+		</div>
+		<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+			{
+				testimonials.map((item) => (
+					<TestimonialCard
+						testimonial={item.testimonial}
+						name={item.name}
+						title={item.title}
+					/>
+				))
+			}
+		</div>
+	</div>
+</div>

@@ -24,7 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { IconInnerShadowTop } from "@tabler/icons-react"
+import logoUrl from "@assets/logo.svg"
 import type { UserProp, User } from "@/components/dashboard-page"
 
 function SubmitScoreForm({
@@ -152,10 +152,9 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="#" />}
+              render={<a href="/" />}
             >
-              <IconInnerShadowTop className="size-5!" />
-              <span className="text-base font-semibold">Acme Inc.</span>
+              <img src={logoUrl} alt="Codestitch" className="h-5 w-auto dark:invert" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

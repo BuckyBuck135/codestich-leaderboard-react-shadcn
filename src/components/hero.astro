@@ -1,0 +1,211 @@
+---
+
+---
+
+<!-- Mobile beam -->
+<div
+	class="pointer-events-none absolute inset-0 z-50 overflow-hidden md:hidden"
+>
+	<div class="relative site-container flex">
+		<div
+			class="beam-left pointer-events-none absolute -top-[800px] -left-[100px] h-[1600px] w-[200px] bg-gradient-to-b from-foreground/50 to-transparent blur-2xl dark:from-foreground/20"
+		>
+		</div>
+	</div>
+</div>
+
+<!-- Hero -->
+<div id="main-content" class="relative site-container border-x py-20">
+	<!-- Desktop beams -->
+	<div class="pointer-events-none absolute inset-0 overflow-hidden">
+		<div class="absolute inset-0 z-10 hidden md:block">
+			<div class="relative site-container flex h-14">
+				<div
+					class="beam-left pointer-events-none absolute -top-[800px] -left-[100px] h-[1600px] w-[200px] bg-gradient-to-b from-foreground/50 to-transparent blur-2xl dark:from-foreground/20"
+				>
+				</div>
+			</div>
+		</div>
+		<div class="absolute inset-0 z-10 hidden md:block">
+			<div class="relative site-container flex h-14">
+				<div
+					class="beam-right pointer-events-none absolute -top-[800px] -right-[100px] h-[1600px] w-[200px] bg-gradient-to-b from-foreground/50 to-transparent blur-2xl dark:from-foreground/20"
+				>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="mx-auto max-w-3xl px-4 text-center">
+		<div class="flex justify-center">
+			<h1
+				class="mb-6 text-4xl leading-tight font-semibold md:text-5xl md:leading-[1.15]"
+			>
+				Track your <span class="rounded-md border px-1 py-0.5"
+					><span id="animated-word" class="inline-block">wins</span></span
+				> on the
+				<span class="hero-text-gradient">Codestitch Leaderboard</span>
+			</h1>
+		</div>
+		<p class="mb-8 text-lg text-pretty text-muted-foreground md:text-xl">
+			Share your MRR and see how you stack up against the community. There's no
+			reward, except the will to improve.
+		</p>
+		<div class="flex flex-wrap items-center justify-center gap-4">
+			<a
+				href="/dashboard/"
+				class="inline-flex h-9 items-center justify-center rounded-4xl bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
+			>
+				Go to dashboard
+			</a>
+			<a
+				href="/auth/signin/"
+				class="inline-flex h-9 items-center justify-center rounded-4xl px-5 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"
+			>
+				Sign In
+			</a>
+		</div>
+	</div>
+</div>
+
+<script>
+	const words = ["wins", "revenue", "clients", "progress"]
+	const wordElement = document.getElementById("animated-word")
+	let currentIndex = 0
+
+	function updateContainerWidth() {
+		if (!wordElement) return
+		const style = window.getComputedStyle(wordElement)
+		const temp = document.createElement("span")
+		temp.style.visibility = "hidden"
+		temp.style.position = "absolute"
+		temp.style.fontSize = style.fontSize
+		temp.style.fontFamily = style.fontFamily
+		temp.style.fontWeight = style.fontWeight
+		let maxWidth = 0
+		words.forEach((word) => {
+			temp.textContent = word
+			document.body.appendChild(temp)
+			maxWidth = Math.max(maxWidth, temp.getBoundingClientRect().width + 8)
+			document.body.removeChild(temp)
+		})
+		wordElement.style.minWidth = `${maxWidth}px`
+	}
+
+	function letterSpans(word: string) {
+		return word
+			.split("")
+			.map((l) => `<span class="letter">${l}</span>`)
+			.join("")
+	}
+
+	function fadeLetters(from: number, to: number, duration = 300, stagger = 50) {
+		wordElement?.querySelectorAll<HTMLElement>(".letter").forEach((el, i) => {
+			el.animate([{ opacity: from }, { opacity: to }], {
+				duration,
+				delay: i * stagger,
+				fill: "forwards",
+				easing: "ease-in-out",
+			})
+		})
+	}
+
+	function animateText() {
+		if (!wordElement) return
+		wordElement.querySelectorAll(".letter").forEach((el) => {
+			el.animate([{ opacity: 1 }, { opacity: 0 }], {
+				duration: 300,
+				fill: "forwards",
+				easing: "ease-in-out",
+			})
+		})
+		setTimeout(() => {
+			currentIndex = (currentIndex + 1) % words.length
+			if (wordElement) {
+				wordElement.innerHTML = letterSpans(words[currentIndex])
+				fadeLetters(0, 1, 200, 50)
+			}
+		}, 350)
+	}
+
+	if (wordElement) {
+		wordElement.innerHTML = letterSpans(words[0])
+		updateContainerWidth()
+		fadeLetters(0, 1, 200, 50)
+	}
+
+	window.addEventListener("resize", updateContainerWidth)
+	setInterval(animateText, 3000)
+</script>
+
+<style>
+	.beam-left {
+		transform: rotate(-45deg);
+		animation: beam-left-sway 14s ease-in-out infinite;
+	}
+
+	.beam-right {
+		transform: rotate(45deg);
+		animation: beam-right-sway 14s ease-in-out infinite;
+		animation-delay: -5s;
+	}
+
+	@keyframes beam-left-sway {
+		0%,
+		100% {
+			transform: rotate(-45deg);
+		}
+		33% {
+			transform: rotate(-53deg);
+		}
+		66% {
+			transform: rotate(-38deg);
+		}
+	}
+
+	@keyframes beam-right-sway {
+		0%,
+		100% {
+			transform: rotate(45deg);
+		}
+		33% {
+			transform: rotate(38deg);
+		}
+		66% {
+			transform: rotate(53deg);
+		}
+	}
+
+	.hero-text-gradient {
+		background: linear-gradient(
+			135deg,
+			oklch(82.035% 0.16462 81.052) 0%,
+			oklch(0.65 0.16 140) 100%
+		);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.dark .hero-text-gradient {
+		background: linear-gradient(
+			135deg,
+			var(--primary) 0%,
+			oklch(0.75 0.18 145) 100%
+		);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	#animated-word {
+		display: inline-block;
+		min-width: 0;
+		text-align: center;
+	}
+
+	.letter {
+		opacity: 0;
+		display: inline-block;
+	}
+</style>

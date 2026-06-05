@@ -1,0 +1,52 @@
+---
+import Logo from "@assets/logo.svg"
+import { IconBrandDiscord, IconBrandGithub } from "@tabler/icons-react"
+---
+
+<footer class="w-full border-t bg-background">
+	<div class="site-container flex h-14 items-center border-x">
+		<a href="/" class="flex items-center">
+			<Logo class="h-6 w-auto dark:invert" />
+		</a>
+
+		<div class="flex-1"></div>
+
+		<div class="flex items-center gap-4">
+			<span class="text-xs text-muted-foreground">
+				&copy; {new Date().getFullYear()}
+				<a
+					href="https://montagnenoirewebstudio.com/"
+					target="_blank"
+					rel="noreferrer"
+					class="transition-colors hover:text-foreground"
+				>
+					Montagne Noire Web Studio
+				</a>
+			</span>
+
+			<div class="h-4 w-px bg-border"></div>
+
+			<div class="flex items-center gap-0.5">
+				<a
+					href="https://discord.gg/"
+					target="_blank"
+					rel="noreferrer"
+					aria-label="Discord"
+					class="inline-flex size-9 items-center justify-center rounded-4xl text-sm transition-colors hover:bg-muted hover:text-foreground"
+				>
+					<IconBrandDiscord className="size-4" aria-hidden="true" />
+				</a>
+
+				<a
+					href="https://github.com/"
+					target="_blank"
+					rel="noreferrer"
+					aria-label="GitHub"
+					class="inline-flex size-9 items-center justify-center rounded-4xl text-sm transition-colors hover:bg-muted hover:text-foreground"
+				>
+					<IconBrandGithub className="size-4" aria-hidden="true" />
+				</a>
+			</div>
+		</div>
+	</div>
+</footer>
