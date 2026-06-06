@@ -19,12 +19,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import logoUrl from "@assets/logo.svg"
 import type { UserProp, User } from "@/components/dashboard-page"
 
 function SubmitScoreForm({
@@ -147,19 +142,7 @@ export function AppSidebar({
 }) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="/" />}
-            >
-              <img src={logoUrl} alt="Codestitch" className="h-5 w-auto dark:invert" />
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="pt-14">
         <SidebarGroup>
           <SidebarGroupLabel>Add or Update MRR</SidebarGroupLabel>
           <SidebarGroupContent className="px-2">
