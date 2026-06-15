@@ -11,6 +11,9 @@ export default defineConfig({
   adapter: netlify(),
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ["astro:actions"],
+    },
   },
   integrations: [react()],
 })
