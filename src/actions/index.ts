@@ -19,7 +19,6 @@ export const server = {
         path: ["confirm-password"],
       }),
     handler: async ({ email, password, name, agency, url }, context) => {
-      console.log("signUp handler", { email, name, agency, url })
       const supabase = createClient({
         request: context.request,
         cookies: context.cookies,
@@ -120,6 +119,7 @@ export const server = {
   }),
 
   submitMrr: defineAction({
+    accept: "json",
     input: z.object({
       targetUserId: z.uuid().optional(),
       value: z.number().int().min(0),
@@ -156,7 +156,7 @@ export const server = {
         throw new ActionError({ code: "FORBIDDEN", message: "Not authorized to submit MRR" })
       }
 
-      const { error } = await supabase.from("mrr").insert({ user_id: userId, value })
+      const { error } = await supabase.from("mrr").upsert({ user_id: userId, value }, { onConflict: "user_id" })
       if (error) {
         throw new ActionError({ code: "BAD_REQUEST", message: error.message })
       }

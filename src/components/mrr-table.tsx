@@ -52,7 +52,7 @@ export function MrrTable({ metrics = [] }: { metrics?: MetricRow[] }) {
                 </TableCell>
                 <TableCell>${row.value.toLocaleString("en-US")}</TableCell>
                 <TableCell>
-                  <a href={row.url} target="_blank" rel="noopener noreferrer">
+                  <a href={row.url} target="_blank" rel="noopener noreferrer" className="underline">
                     {row.agency}
                   </a>
                 </TableCell>
