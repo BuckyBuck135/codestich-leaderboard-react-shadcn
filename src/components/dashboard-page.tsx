@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { IconLoader2 } from "@tabler/icons-react"
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartBar } from "@/components/chart-bar-default"
@@ -46,6 +47,7 @@ export function DashboardPage({
 }) {
   const [metrics, setMetrics] = React.useState<MetricRow[]>(initialMetrics)
   const [mrrHistory, setMrrHistory] = React.useState<MrrHistoryEntry[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     const supabase = createBrowserSupabaseClient()
@@ -77,8 +79,14 @@ export function DashboardPage({
       }
     }
 
-    fetchHistory()
-    fetchMetrics()
+    ;(async () => {
+      setLoading(true)
+      try {
+        await Promise.all([fetchMetrics(), fetchHistory()])
+      } finally {
+        setLoading(false)
+      }
+    })()
 
     const channel = supabase
       .channel("mrr-changes")
@@ -109,24 +117,30 @@ export function DashboardPage({
       <AppSidebar variant="inset" user={user} agencyOwners={agencyOwners} />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <div className="px-4 lg:px-6">
-                <ChartBar metrics={metrics} />
-              </div>
-              <div className="px-4 lg:px-6">
-                <MrrTable metrics={metrics} />
-              </div>
-              <div className="px-4 lg:px-6">
-                <ChartLineLinear
-                  data={mrrHistory}
-                  isAuthenticated={!!user?.id}
-                />
+        {loading ? (
+          <div className="flex flex-1 items-center justify-center">
+            <IconLoader2 className="size-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                <div className="px-4 lg:px-6">
+                  <ChartBar metrics={metrics} />
+                </div>
+                <div className="px-4 lg:px-6">
+                  <MrrTable metrics={metrics} />
+                </div>
+                <div className="px-4 lg:px-6">
+                  <ChartLineLinear
+                    data={mrrHistory}
+                    isAuthenticated={!!user?.id}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </SidebarInset>
     </SidebarProvider>
   )
