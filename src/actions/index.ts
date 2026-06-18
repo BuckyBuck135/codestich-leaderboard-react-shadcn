@@ -161,6 +161,13 @@ export const server = {
         throw new ActionError({ code: "BAD_REQUEST", message: error.message })
       }
 
+      const { error: historyError } = await supabase
+        .from("mrr_history")
+        .insert({ user_id: userId, value })
+      if (historyError) {
+        throw new ActionError({ code: "INTERNAL_SERVER_ERROR", message: historyError.message })
+      }
+
       return { success: true }
     },
   }),

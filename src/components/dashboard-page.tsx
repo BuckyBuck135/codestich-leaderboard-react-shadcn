@@ -5,6 +5,7 @@ import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartBar } from "@/components/chart-bar-default"
 import { MrrTable } from "@/components/mrr-table"
+import { ChartLineLinear } from "@/components/chart-line-linear"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { createBrowserSupabaseClient } from "@/lib/supabase"
@@ -29,6 +30,11 @@ export type MetricRow = {
   url: string
 }
 
+export type MrrHistoryEntry = {
+  value: number
+  recorded_at: string
+}
+
 export function DashboardPage({
   user = null,
   agencyOwners = [],
@@ -39,9 +45,20 @@ export function DashboardPage({
   metrics?: MetricRow[]
 }) {
   const [metrics, setMetrics] = React.useState<MetricRow[]>(initialMetrics)
+  const [mrrHistory, setMrrHistory] = React.useState<MrrHistoryEntry[]>([])
 
   React.useEffect(() => {
     const supabase = createBrowserSupabaseClient()
+
+    async function fetchHistory() {
+      if (!user?.id) return
+      const { data } = await supabase
+        .from("mrr_history")
+        .select("value, recorded_at")
+        .eq("user_id", user.id)
+        .order("recorded_at", { ascending: true })
+      if (data) setMrrHistory(data)
+    }
 
     async function fetchMetrics() {
       const { data } = await supabase.from("mrr").select(`
@@ -60,6 +77,7 @@ export function DashboardPage({
       }
     }
 
+    fetchHistory()
     fetchMetrics()
 
     const channel = supabase
@@ -69,6 +87,7 @@ export function DashboardPage({
         { event: "*", schema: "public", table: "mrr" },
         () => {
           fetchMetrics()
+          fetchHistory()
         }
       )
       .subscribe()
@@ -99,6 +118,9 @@ export function DashboardPage({
               </div>
               <div className="px-4 lg:px-6">
                 <MrrTable metrics={metrics} />
+              </div>
+              <div className="px-4 lg:px-6">
+                <ChartLineLinear data={mrrHistory} isAuthenticated={!!user?.id} />
               </div>
             </div>
           </div>
