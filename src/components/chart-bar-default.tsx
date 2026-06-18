@@ -1,7 +1,6 @@
 "use client"
 
 // import { IconTrendingUp } from "@tabler/icons-react"
-import { useEffect, useState } from "react"
 import { Bar, BarChart, CartesianGrid, YAxis, XAxis } from "recharts"
 
 import {
@@ -60,12 +59,6 @@ function CustomXAxisTick({
 }
 
 export function ChartBar({ metrics = [] }: { metrics?: MetricRow[] }) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
     <Card>
       <CardHeader>
@@ -75,33 +68,29 @@ export function ChartBar({ metrics = [] }: { metrics?: MetricRow[] }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {mounted ? (
-          <ChartContainer config={chartConfig} className="max-h-96 w-full">
-            <BarChart accessibilityLayer data={metrics} margin={{ bottom: 24 }}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="name"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                interval={0}
-                tick={(props) => <CustomXAxisTick {...props} data={metrics} />}
-              />
-              <YAxis
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Bar dataKey="value" fill="var(--color-value)" radius={8} />
-            </BarChart>
-          </ChartContainer>
-        ) : (
-          <div className="aspect-video max-h-96 w-full" />
-        )}
+        <ChartContainer config={chartConfig} className="max-h-96 w-full">
+          <BarChart accessibilityLayer data={metrics} margin={{ bottom: 24 }}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              interval={0}
+              tick={(props) => <CustomXAxisTick {...props} data={metrics} />}
+            />
+            <YAxis
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="value" fill="var(--color-value)" radius={8} />
+          </BarChart>
+        </ChartContainer>
       </CardContent>
     </Card>
   )
