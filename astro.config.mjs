@@ -12,7 +12,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      exclude: ["astro:actions"],
+      exclude: ["astro:actions", "astro/actions/runtime/entrypoints/client.js"],
     },
   },
   integrations: [react()],
