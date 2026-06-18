@@ -1,6 +1,6 @@
 import { actions, isInputError } from "astro:actions"
 import { withState } from "@astrojs/react/actions"
-import { useActionState, useEffect } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,27 +9,49 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
+import { createBrowserSupabaseClient } from "@/lib/supabase"
 
 export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [isReady, setIsReady] = useState(false)
+
   const [state, action, pending] = useActionState(
     withState(actions.updatePassword),
     { data: undefined, error: undefined },
   )
 
-  const fieldErrors = isInputError(state.error) ? state.error.fields : {}
-  const generalError =
-    state.error && !isInputError(state.error) ? state.error.message : null
+  useEffect(() => {
+    const supabase = createBrowserSupabaseClient()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsReady(true)
+      } else if (event === "SIGNED_OUT") {
+        window.location.href = "/auth/forgot-password"
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     if (state.data?.success) {
       window.location.href = "/auth/signin"
     }
   }, [state.data])
+
+  const fieldErrors = isInputError(state.error) ? state.error.fields : {}
+  const generalError =
+    state.error && !isInputError(state.error) ? state.error.message : null
+
+  if (!isReady) {
+    return (
+      <p className="text-center text-sm text-muted-foreground">
+        Verifying reset link…
+      </p>
+    )
+  }
 
   return (
     <form

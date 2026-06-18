@@ -1,5 +1,4 @@
 ---
-import type { EmailOtpType } from "@supabase/supabase-js"
 import { createClient } from "../../lib/supabase"
 
 const supabase = createClient({
@@ -9,17 +8,11 @@ const supabase = createClient({
 
 const requestUrl = new URL(Astro.request.url)
 const code = requestUrl.searchParams.get("code")
-const token_hash = requestUrl.searchParams.get("token_hash")
-const type = requestUrl.searchParams.get("type") as EmailOtpType | null
+const next = requestUrl.searchParams.get("next") ?? "/dashboard"
 
 if (code) {
   const { error } = await supabase.auth.exchangeCodeForSession(code)
-  if (!error) return Astro.redirect("/dashboard")
-}
-
-if (token_hash && type) {
-  const { error } = await supabase.auth.verifyOtp({ token_hash, type })
-  if (!error) return Astro.redirect("/dashboard")
+  if (!error) return Astro.redirect(next)
 }
 
 return Astro.redirect("/auth/signin")
