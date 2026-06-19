@@ -23,11 +23,12 @@ export const server = {
         request: context.request,
         cookies: context.cookies,
       })
+      const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? new URL(context.request.url).origin
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${new URL(context.request.url).origin}/auth/callback`,
+          emailRedirectTo: `${siteUrl}/auth/callback`,
           data: { name: name, agency: agency, url: url },
         },
       })
@@ -70,9 +71,9 @@ export const server = {
         request: context.request,
         cookies: context.cookies,
       })
-      const origin = new URL(context.request.url).origin
+      const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? new URL(context.request.url).origin
       const { error } = await supabase.auth.resetPasswordForEmail(input.email, {
-        redirectTo: `${origin}/auth/reset-password`,
+        redirectTo: `${siteUrl}/auth/reset-password`,
       })
       if (error) {
         throw new ActionError({ code: "BAD_REQUEST", message: error.message })
