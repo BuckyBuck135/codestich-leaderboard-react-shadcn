@@ -39,14 +39,6 @@ export function SignupForm({
             Fill in the form below to create your account
           </p>
         </div>
-        {generalError && (
-          <p className="text-center text-sm text-destructive">{generalError}</p>
-        )}
-        {state.data?.message && (
-          <p className="text-center text-sm text-green-600">
-            {state.data.message}
-          </p>
-        )}
         <Field>
           <FieldLabel htmlFor="name">Full Name</FieldLabel>
           <Input
@@ -128,6 +120,14 @@ export function SignupForm({
             {pending ? "Creating account…" : "Create Account"}
           </Button>
         </Field>
+        {generalError && (
+          <p className="text-center text-sm text-destructive">{generalError}</p>
+        )}
+        {state.data?.message && (
+          <p className="text-center text-sm text-green-600">
+            {state.data.message}
+          </p>
+        )}
       </FieldGroup>
     </form>
   )

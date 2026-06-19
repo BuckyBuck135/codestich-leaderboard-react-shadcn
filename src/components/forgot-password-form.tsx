@@ -37,14 +37,6 @@ export function ForgotPasswordForm({
             Enter your email and we&apos;ll send you a reset link
           </p>
         </div>
-        {generalError && (
-          <p className="text-center text-sm text-destructive">{generalError}</p>
-        )}
-        {state.data?.message && (
-          <p className="text-center text-sm text-green-600">
-            {state.data.message}
-          </p>
-        )}
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
@@ -63,6 +55,14 @@ export function ForgotPasswordForm({
             {pending ? "Sending…" : "Send reset link"}
           </Button>
         </Field>
+        {generalError && (
+          <p className="text-center text-sm text-destructive">{generalError}</p>
+        )}
+        {state.data?.message && (
+          <p className="text-center text-sm text-green-600">
+            {state.data.message}
+          </p>
+        )}
         <FieldDescription className="text-center">
           <a href="/auth/signin" className="underline underline-offset-4">
             Back to sign in

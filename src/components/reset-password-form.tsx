@@ -66,9 +66,6 @@ export function ResetPasswordForm({
             Choose a strong password for your account
           </p>
         </div>
-        {generalError && (
-          <p className="text-center text-sm text-destructive">{generalError}</p>
-        )}
         <Field>
           <FieldLabel htmlFor="password">New Password</FieldLabel>
           <PasswordInput id="password" name="password" required />
@@ -95,6 +92,9 @@ export function ResetPasswordForm({
             {pending ? "Updating…" : "Update password"}
           </Button>
         </Field>
+        {generalError && (
+          <p className="text-center text-sm text-destructive">{generalError}</p>
+        )}
       </FieldGroup>
     </form>
   )

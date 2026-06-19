@@ -45,9 +45,6 @@ export function SigninForm({
             Enter your email below to login to your account
           </p>
         </div>
-        {generalError && (
-          <p className="text-center text-sm text-destructive">{generalError}</p>
-        )}
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
@@ -81,6 +78,9 @@ export function SigninForm({
             {pending ? "Logging in…" : "Login"}
           </Button>
         </Field>
+        {generalError && (
+          <p className="text-center text-sm text-destructive">{generalError}</p>
+        )}
         <FieldSeparator>Don&apos;t have an account? </FieldSeparator>
 
         <FieldDescription className="text-center">
