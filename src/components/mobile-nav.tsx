@@ -61,7 +61,7 @@ export function MobileNav({ user = null }: Props) {
 			<SheetContent side="right">
 				<div className="flex flex-col gap-1 p-6 pt-16">
 					<a
-						href="/dashboard"
+						href="/"
 						className="inline-flex rounded-4xl px-3 text-sm transition-colors hover:bg-muted hover:text-foreground"
 					>
 						Home

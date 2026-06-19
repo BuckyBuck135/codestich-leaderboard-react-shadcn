@@ -283,7 +283,7 @@ function SidebarTrigger({
 			{...props}
 		>
 			<IconLayoutSidebar />
-			Open sidebar
+			Toggle sidebar
 		</Button>
 	);
 }
