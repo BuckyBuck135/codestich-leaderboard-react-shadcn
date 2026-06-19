@@ -1,11 +1,11 @@
 ---
-import Logo from "@assets/logo.svg"
+import Logo from "@assets/logo.svg";
 
 interface Props {
-	user?: { name: string; email: string } | null
+	user?: { name: string; email: string } | null;
 }
 
-const { user = null } = Astro.props
+const { user = null } = Astro.props;
 
 function getInitials(name: string) {
 	return name
@@ -13,7 +13,7 @@ function getInitials(name: string) {
 		.filter(Boolean)
 		.slice(0, 2)
 		.map((p) => p[0].toUpperCase())
-		.join("")
+		.join("");
 }
 ---
 
@@ -29,7 +29,7 @@ function getInitials(name: string) {
 
 		<nav class="flex items-center gap-0.5">
 			<a
-				href="https://discord.gg/"
+				href="https://discord.gg/tC5hf9BF"
 				target="_blank"
 				rel="noreferrer"
 				aria-label="Discord"
@@ -135,28 +135,28 @@ function getInitials(name: string) {
 </header>
 
 <script>
-	const toggle = document.getElementById("theme-toggle")!
-	const sun = document.getElementById("icon-sun")!
-	const moon = document.getElementById("icon-moon")!
+	const toggle = document.getElementById("theme-toggle")!;
+	const sun = document.getElementById("icon-sun")!;
+	const moon = document.getElementById("icon-moon")!;
 
 	function applyTheme(dark: boolean) {
-		document.documentElement.classList.toggle("dark", dark)
-		sun.classList.toggle("hidden", !dark)
-		moon.classList.toggle("hidden", dark)
-		localStorage.setItem("theme", dark ? "dark" : "light")
+		document.documentElement.classList.toggle("dark", dark);
+		sun.classList.toggle("hidden", !dark);
+		moon.classList.toggle("hidden", dark);
+		localStorage.setItem("theme", dark ? "dark" : "light");
 	}
 
-	applyTheme(document.documentElement.classList.contains("dark"))
+	applyTheme(document.documentElement.classList.contains("dark"));
 
 	toggle.addEventListener("click", () => {
-		applyTheme(!document.documentElement.classList.contains("dark"))
-	})
+		applyTheme(!document.documentElement.classList.contains("dark"));
+	});
 
 	document
 		.getElementById("sign-out-btn")
 		?.addEventListener("click", async () => {
-			const { actions } = await import("astro:actions")
-			await actions.signOut()
-			window.location.href = "/auth/signin"
-		})
+			const { actions } = await import("astro:actions");
+			await actions.signOut();
+			window.location.href = "/auth/signin";
+		});
 </script>
