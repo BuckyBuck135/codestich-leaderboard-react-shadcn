@@ -1,5 +1,6 @@
 ---
 import Logo from "@assets/logo.svg";
+import { MobileNav } from "@/components/mobile-nav";
 
 interface Props {
 	user?: { name: string; email: string } | null;
@@ -60,7 +61,7 @@ function getInitials(name: string) {
 			<button
 				id="theme-toggle"
 				aria-label="Toggle theme"
-				class="inline-flex size-9 items-center justify-center rounded-4xl text-sm transition-colors hover:bg-muted hover:text-foreground"
+				class="hidden md:inline-flex size-9 items-center justify-center rounded-4xl text-sm transition-colors hover:bg-muted hover:text-foreground"
 			>
 				<svg
 					id="icon-sun"
@@ -98,11 +99,13 @@ function getInitials(name: string) {
 				</svg>
 			</button>
 
-			<div class="mx-2 h-4 w-px bg-border"></div>
+			<MobileNav user={user} client:load />
+
+			<div class="mx-2 hidden h-4 w-px bg-border sm:block"></div>
 
 			{
 				user ? (
-					<div class="flex items-center gap-2">
+					<div class="hidden sm:flex items-center gap-2">
 						<div class="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
 							{getInitials(user.name)}
 						</div>
@@ -117,13 +120,13 @@ function getInitials(name: string) {
 					<div class="flex items-center gap-0.5">
 						<a
 							href="/auth/signin"
-							class="inline-flex h-8 items-center justify-center rounded-4xl px-3 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"
+							class="hidden sm:inline-flex h-8 items-center justify-center rounded-4xl px-3 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"
 						>
 							Sign in
 						</a>
 						<a
 							href="/auth/signup"
-							class="inline-flex h-8 items-center justify-center rounded-4xl bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
+							class="hidden sm:inline-flex h-8 items-center justify-center rounded-4xl bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
 						>
 							Sign up
 						</a>
