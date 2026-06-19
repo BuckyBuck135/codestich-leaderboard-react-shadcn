@@ -25,6 +25,7 @@ rm -rf node_modules/.vite
 [x] show password toggle on forms
 [x] remove linting and prettier
 [] customize supabase notification emails
+[] had to turn of 'confirm email' feature from supabase as there's a rate limit on free tier. Changed the error message and navigate behavior upon signup.
 
 ## supabase functions
 
