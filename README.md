@@ -1,37 +1,7 @@
 ## Vite bugs
 
-5004 hydration issues
+504 hydration issues
 rm -rf node_modules/.vite
-
-Root cause: Recharts uses a module-level counter (idCounter) to generate unique clip path IDs for its SVG elements (recharts1-clip, recharts2-clip,
-etc.). In Astro's SSR mode, that module persists in memory across page requests — so the counter keeps incrementing on the server. The browser
-always starts fresh at recharts1-clip. After the first page load the IDs diverge, React throws a hydration error, and the broken clip-path reference causes the chart bars to render invisibly (the Card shell is unaffected because clip paths only apply to the SVG).
-
-The mismatch resets whenever the dev server fully restarts (e.g. after npm install), which is why the chart appears to work immediately after an
-install and then breaks on the next refresh.
-
----
-
-Fix (chart-bar-default.tsx):
-
-Added a mounted state that starts false on both server and client. The recharts components (ChartContainer, BarChart, etc.) only render after  
- useEffect fires — meaning they are never server-side rendered. React never has anything to hydrate for the SVG, so there's no ID mismatch and no  
- hydration error.
-
-The Card / CardHeader / CardDescription remain outside the guard and continue to SSR and hydrate normally. A placeholder <div
-  className="aspect-video max-h-96 w-full" /> holds the same space during the brief pre-mount window to prevent layout shift.
-
-- attempts to fix:
-  optimizeDeps: {
-  exclude: ["astro:actions"],
-  },
-  SEEMS TO MAKE A DIFFERENCE
-
-        	"dev": "astro dev --force",
-
-  no difference without
-
-## TODO
 
 ### MUST-HAVE
 
@@ -50,10 +20,10 @@ The Card / CardHeader / CardDescription remain outside the guard and continue to
 ### NICE-TO-HAVE
 
 [x] validate https:// for url
-[] more user info in Header
+[x] more user info in Header
 [] OAuth with Github
 [x] show password toggle on forms
-[] remove linting and prettier
+[x] remove linting and prettier
 [] customize supabase notification emails
 
 ## supabase functions
@@ -62,14 +32,14 @@ The Card / CardHeader / CardDescription remain outside the guard and continue to
 
 ```js
 const supabase = createClient({
-  request: Astro.request,
-  cookies: Astro.cookies,
-})
+	request: Astro.request,
+	cookies: Astro.cookies,
+});
 
-const { data } = await supabase.auth.getUser()
-if (!data?.user) return Astro.redirect("/auth/signin")
+const { data } = await supabase.auth.getUser();
+if (!data?.user) return Astro.redirect("/auth/signin");
 
-const user = data.user
+const user = data.user;
 ```
 
 ## Supabase Tables
@@ -358,5 +328,5 @@ Files to Create / Modify
 │ src/components/signup-form.tsx  │ Update (wire OAuth button)                        │
 ├─────────────────────────────────┼───────────────────────────────────────────────────┤
 │ src/actions/index.ts            │ Update (add updateProfile action)                 │
-└─────────────────────────────────┴───────────────────────────────────────────────────┘
+└─────────────────────────────────┴───────────────────────────────────────────── ──────┘
 $$
