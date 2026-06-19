@@ -1,13 +1,22 @@
 ---
-import "@/styles/global.css"
-import Navbar from "@/components/navbar.astro"
-import Footer from "@/components/footer.astro"
+import "@/styles/global.css";
+import Navbar from "@/components/navbar.astro";
 
 interface Props {
-	user?: { name: string; email: string } | null
+	user?: { name: string; email: string } | null;
+	title?: string;
+	description?: string;
 }
 
-const { user = null } = Astro.props
+const {
+	user = null,
+	title = "CodeStitch Community Leaderboard",
+	description = "Track your MRR and see how you stack up against the Codestitch community. Share your wins, revenue, and progress. And join us on the CodeStitch discord!",
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImage = new URL("/social.jpeg", siteUrl).href;
 ---
 
 <html lang="en">
@@ -15,14 +24,35 @@ const { user = null } = Astro.props
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>CodeStitch Community Leaderboard</title>
+		<link rel="canonical" href={canonicalUrl} />
+
+		<title>{title}</title>
+		<meta name="description" content={description} />
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta
+			property="og:image:alt"
+			content="CodeStitch Community Leaderboard"
+		/>
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+
 		<script is:inline>
 			const theme =
 				localStorage.getItem("theme") ||
 				(window.matchMedia("(prefers-color-scheme: dark)").matches
 					? "dark"
-					: "light")
-			document.documentElement.classList.toggle("dark", theme === "dark")
+					: "light");
+			document.documentElement.classList.toggle("dark", theme === "dark");
 		</script>
 	</head>
 	<body>

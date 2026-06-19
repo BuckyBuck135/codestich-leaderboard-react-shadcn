@@ -7,6 +7,7 @@ import netlify from "@astrojs/netlify"
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://codestitch-community-leaderboard.netlify.app",
   output: "server",
   adapter: netlify(),
   vite: {
