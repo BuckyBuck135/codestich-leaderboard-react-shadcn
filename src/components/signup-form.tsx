@@ -1,6 +1,6 @@
 import { actions, isInputError } from "astro:actions"
 import { withState } from "@astrojs/react/actions"
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +25,10 @@ export function SignupForm({
   const fieldErrors = isInputError(state.error) ? state.error.fields : {}
   const generalError =
     state.error && !isInputError(state.error) ? state.error.message : null
+
+  useEffect(() => {
+    if (state.data?.success) window.location.href = "/dashboard"
+  }, [state.data?.success])
 
   return (
     <form
@@ -122,11 +126,6 @@ export function SignupForm({
         </Field>
         {generalError && (
           <p className="text-center text-sm text-destructive">{generalError}</p>
-        )}
-        {state.data?.message && (
-          <p className="text-center text-sm text-green-600">
-            {state.data.message}
-          </p>
         )}
       </FieldGroup>
     </form>

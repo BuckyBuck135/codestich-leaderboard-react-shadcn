@@ -35,7 +35,7 @@ export const server = {
       if (error) {
         throw new ActionError({ code: "BAD_REQUEST", message: error.message })
       }
-      return { message: "Check your email to confirm your account" }
+      return { success: true }
     },
   }),
 
