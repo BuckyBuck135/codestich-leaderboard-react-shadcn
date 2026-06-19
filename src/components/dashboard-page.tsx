@@ -4,12 +4,14 @@ import * as React from "react"
 import { IconLoader2 } from "@tabler/icons-react"
 
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartBar } from "@/components/chart-bar-default"
+import { ChartBarDesktop } from "@/components/chart-bar-default"
+import { ChartBarMobile } from "@/components/chart-bar-horizontal"
 import { MrrTable } from "@/components/mrr-table"
 import { ChartLineLinear } from "@/components/chart-line-linear"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { createBrowserSupabaseClient } from "@/lib/supabase"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export type UserProp = {
   id: string
@@ -45,6 +47,7 @@ export function DashboardPage({
   agencyOwners?: User[]
   metrics?: MetricRow[]
 }) {
+  const isMobile = useIsMobile()
   const [metrics, setMetrics] = React.useState<MetricRow[]>(initialMetrics)
   const [mrrHistory, setMrrHistory] = React.useState<MrrHistoryEntry[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -126,7 +129,10 @@ export function DashboardPage({
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
                 <div className="px-4 lg:px-6">
-                  <ChartBar metrics={metrics} />
+                  {isMobile
+                    ? <ChartBarMobile metrics={metrics} />
+                    : <ChartBarDesktop metrics={metrics} />
+                  }
                 </div>
                 <div className="px-4 lg:px-6">
                   <MrrTable metrics={metrics} />
